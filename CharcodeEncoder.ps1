@@ -117,8 +117,9 @@ class StringEncoder {
             # バイト配列を文字列にデコード
             $decodedString = $this.Encoding.GetString($bytes)
             # 元の文字列と一致するかチェック
-            Write-Host "ラウンドトリップ成功: {0}" -f ($originalString -eq $decodedString)
-            if ($originalString -ne $decodedString) {
+            $isRoundtripSuccessful = $originalString -eq $decodedString
+            Write-Host ("ラウンドトリップ成功: {0}" -f $isRoundtripSuccessful)
+            if (-not $isRoundtripSuccessful) {
                 # 一致しない場合、デコードされた文字列とそのコードポイントを表示
                 Write-Host "デコードされた文字列: $decodedString"
                 foreach ($ch in $decodedString.ToCharArray()) {
@@ -130,9 +131,9 @@ class StringEncoder {
             }
         } catch [System.Text.DecoderFallbackException] {
             # デコードできないバイトがある場合、そのバイトと位置を表示
-            Write-Host "インデックス {0} のバイトをデコードできません" -f $_.Index
+            Write-Host ("インデックス {0} のバイトをデコードできません" -f $_.Index)
             foreach ($unknownByte in $_.BytesUnknown) {
-                Write-Host "0x{0:X2} " -f $unknownByte
+                Write-Host ("0x{0:X2} " -f $unknownByte)
             }
         }
     }
